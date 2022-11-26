@@ -2,14 +2,12 @@
 
 abstract class Pokemons
 {
-    // nom, type, pv, attaque, defense
-
-    public function __construct($nom, $type, $pv, $attaque, $defense)
+    public function __construct($namePoke, $type, $life, $strength, $defense)
     {
-        $this->nom = $nom;
+        $this->namePoke = $namePoke;
         $this->type = $type;
-        $this->pv = $pv;
-        $this->attaque = $attaque;
+        $this->life = $life;
+        $this->strength = $strength;
         $this->defense = $defense;
     }
 }
