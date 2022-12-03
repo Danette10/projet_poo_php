@@ -1,9 +1,26 @@
 <?php
+namespace App\Characters;
 
-class Tortank extends Pokemons
+use App\Classes\Character;
+
+class Tortank extends Character
 {
     public function __construct()
     {
-        parent::__construct('Tortank', 'Eau', 100, 100, 100);
+        parent::__construct(
+            name: 'Tortank',
+            attacktType: 'Magical',
+            elementarytType: 'Water',
+            health: 100,
+            physicalAttack: 0,
+            magicalAttack: 20,
+            defence: 10,
+            mana: 100,
+            manaRecoveryRate: 10,
+            weapon: null,
+            spell: null,
+            isProtectedByDefenceSpell: false,
+            bonusAttack: false,
+        );
     }
 }
