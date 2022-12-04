@@ -85,13 +85,71 @@ while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
     echo PHP_EOL . 'Tour ' . $numberOfRound . PHP_EOL;
 
 
-    //Affichage et Input action du joueur
-    echo "Choisissez un sort parmi les suivants : " . PHP_EOL;
-    echo "\t1. Fireball" . PHP_EOL;
-    echo "\t2. Heal" . PHP_EOL;
-    echo "\t3. Shield" . PHP_EOL;
+    do {
+        //Affichage et Input action du joueur
+        echo "Choisissez un sort parmi les suivants : " . PHP_EOL;
+        echo "\t1. Fireball" . PHP_EOL;
+        echo "\t2. Heal" . PHP_EOL;
+        echo "\t3. Shield" . PHP_EOL;
 
-    $sortChoisi = readline();
+        $sortChoisi = readline();
+
+
+        //Logique des choix du personnages
+        switch ($sortChoisi) {
+            case 1:
+                $dracofeu->setSpell($fireball);
+
+                $previousMana = $dracofeu->getMana();
+                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+
+                echo "Vous avez choisi le sort ";
+                echo "\033[31m";
+                echo $fireball->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+
+                $dracofeu->attackEnemy($enemy, true);
+
+                break;
+
+            case 2:
+                $dracofeu->setSpell($heal);
+
+                $previousMana = $dracofeu->getMana();
+                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+
+                echo "Vous avez choisi le sort ";
+                echo "\033[32m";
+                echo $heal->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+
+                $dracofeu->triggerHealingSpell();
+
+                break;
+
+            case 3:
+                $dracofeu->setSpell($shield);
+
+                $previousMana = $dracofeu->getMana();
+                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+
+                echo "Vous avez choisi le sort ";
+                echo "\033[34m";
+                echo $shield->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+
+                $dracofeu->triggerDefenceSpell();
+
+                break;
+
+            default:
+                echo 'Sort non reconnu';
+                exit;
+        }
+    }while($sortChoisi != 1 && $sortChoisi != 2);
 
 
     //AI de l'ennemie
@@ -100,38 +158,6 @@ while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
     $previousManaEnemy = $enemy->getMana();
     $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
     $enemy->attackEnemy($dracofeu, false);
-
-
-    //Logique des choix du personnages
-    switch ($sortChoisi) {
-        case 1:
-            $dracofeu->setSpell($fireball);
-
-            $previousMana = $dracofeu->getMana();
-            $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
-
-            echo "Vous avez choisi le sort ";
-            echo "\033[31m";
-            echo $fireball->getName() . PHP_EOL;
-            echo "\033[0m";
-            echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
-
-            $dracofeu->attackEnemy($enemy, true);
-
-            break;
-
-        case 2:
-            echo "Vous avez choisi le sort Heal" . PHP_EOL;
-            break;
-
-        case 3:
-            echo "Vous avez choisi le sort Shield" . PHP_EOL;
-            break;
-
-        default:
-            echo 'Sort non reconnu';
-            exit;
-    }
 
 
     //Post round

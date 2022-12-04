@@ -179,10 +179,15 @@ abstract class Character
     public function receiveAttack(int $physicalAttack, int $magicalAttack){
 
         if($this->getIsProtectedByDefenceSpell() == true){
-            $precedentDefence = $this->getDefence();
 
-            //Besoin de limité le plafond/seuil de la défense totale
-            $this->setDefence($this->getDefenceSpell()->getDefenceEfficiency() + $this->getDefence());
+            /*
+             * Quand nous utilisons le sort de défence, puis un autre sort, dans la fonction receiveAttack, nous tentons d'accéder à l'attribut
+             * getDefenceEfficiency. Sauf que le nouveau sort n'est pas le sort de défence mais celui de soin ou d'attaque
+             * Ces sorts de possédans pas d'attribut getDefenceEfficiency, ils renvoient une erreur
+             */
+
+            $precedentDefence = $this->getDefence();
+            $this->setDefence($this->getSpell()->getDefenceEfficiency() + $this->getDefence());
 
             $this->setHealth($this->getHealth() - ($physicalAttack + $magicalAttack) + $this->getDefence());
 
@@ -201,15 +206,18 @@ abstract class Character
     }
 
     //Methods of Spells
-    /*
+
     public function triggerHealingSpell(){
-        $this->setHealth($this->getHealingSpell()->getHealingEfficiency());
-        echo "Le ".$this->getName()." vient de ce soigner de : ".$this->getHealingSpell()->getHealingEfficiency().PHP_EOL;
+        if($this->getSpell()->getHealingEfficiency() + $this->getHealth() > 100){
+            $this->setHealth(100);
+        }
+        else{
+            $this->setHealth($this->getSpell()->getHealingEfficiency() + $this->getHealth());
+        }
 
-        //reduction de mana
-        //Passe le tour
+        echo "Le ".$this->getName()." vient de ce soigner de : ".$this->getSpell()->getHealingEfficiency().PHP_EOL;
     }
-
+    /*
     public function triggerAttackSpell(Character $enemy){
         $enemy->receiveAttack(0, $this->getAttackSpell()->getAttackEfficiency());
         echo "Le ".$this->getName()." vient de d'utiliser un sort d'attaque infligeant : ".$this->getAttackSpell()->getAttackEfficiency().PHP_EOL;
@@ -217,12 +225,10 @@ abstract class Character
         //reduction de mana
         //Passe le tour
     }
-
+    */
     public function triggerDefenceSpell(){
         $this->setIsProtectedByDefenceSpell(true);
-
-        //reduction de mana
-    }*/
+    }
 
     public function recoverMana(){
         //Besoin de limité le plafond/seuil de mana
