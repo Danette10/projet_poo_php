@@ -10,15 +10,34 @@ require_once 'autoload.php';
 
 
 // Création des personnages
-$dracofeu = new Dracofeu();
+$player = new Dracofeu();
 $tortank = new Tortank();
 $tortipouss = new Tortipouss();
 
-$enemyTeam = [$tortank, $tortipouss];
+// Création du tableau des joueurs
+$allPlayers = [$player, $tortank, $tortipouss];
+
+echo "Choisissez votre personnage : " . PHP_EOL;
+
+foreach ($allPlayers as $key => $player) {
+
+    echo "\t" . $key . " : " . $player->getName() . PHP_EOL;
+
+}
+
+$playerChoice = readline();
+$player = $allPlayers[$playerChoice];
+
+echo "Vous avez choisi " . $player->getName() . " !" . PHP_EOL;
+
+// Création du tableau des ennemis
+$enemyTeam = $allPlayers;
+unset($enemyTeam[$playerChoice]);
+
 
 $enemy = $enemyTeam[array_rand($enemyTeam)];
 
-$elementaryTypePlayer = $dracofeu->getElementaryType();
+$elementaryTypePlayer = $player->getElementaryType();
 $elementaryTypeEnemy = $enemy->getElementaryType();
 
 
@@ -58,15 +77,15 @@ $shield = new DefenceSpell(
     manaCost: 10,
 );
 
-$dracofeu->setAttackSpells([
+$player->setAttackSpells([
     $fireball
 ]);
 
-$enemyTeam[0]->setAttackSpells([
+$tortank->setAttackSpells([
     $hydrocanon
 ]);
 
-$enemyTeam[1]->setAttackSpells([
+$tortipouss->setAttackSpells([
     $tranchHerbe
 ]);
 
@@ -91,50 +110,50 @@ do {
         //Logique des choix du personnages
         switch ($sortChoisi) {
             case 1:
-                $dracofeu->setSpell($fireball);
+                $player->setSpell($fireball);
 
-                $previousMana = $dracofeu->getMana();
-                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - $player->getSpell()->getManaCost());
 
                 echo "Vous avez choisi le sort ";
                 echo "\033[31m";
                 echo $fireball->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
-                $dracofeu->attackEnemy($enemy, true);
+                $player->attackEnemy($enemy, true);
 
                 break;
 
             case 2:
-                $dracofeu->setSpell($heal);
+                $player->setSpell($heal);
 
-                $previousMana = $dracofeu->getMana();
-                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - $player->getSpell()->getManaCost());
 
                 echo "Vous avez choisi le sort ";
                 echo "\033[32m";
                 echo $heal->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
-                $dracofeu->triggerHealingSpell();
+                $player->triggerHealingSpell();
 
                 break;
 
             case 3:
-                $dracofeu->setSpell($shield);
+                $player->setSpell($shield);
 
-                $previousMana = $dracofeu->getMana();
-                $dracofeu->setMana($previousMana - $dracofeu->getSpell()->getManaCost());
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - $player->getSpell()->getManaCost());
 
                 echo "Vous avez choisi le sort ";
                 echo "\033[34m";
                 echo $shield->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
-                $dracofeu->triggerDefenceSpell();
+                $player->triggerDefenceSpell();
 
                 break;
 
@@ -157,19 +176,19 @@ do {
 
         $previousManaEnemy = $enemy->getMana();
         $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
-        $enemy->attackEnemy($dracofeu, true);
+        $enemy->attackEnemy($player, false);
 
 
         //Post round
         $numberOfRound++;
-        $dracofeu->setMana($dracofeu->getMana() + $dracofeu->getManaRecoveryRate());
+        $player->setMana($player->getMana() + $player->getManaRecoveryRate());
         $enemy->setMana($enemy->getMana() + $enemy->getManaRecoveryRate());
     }
-} while($dracofeu->getHealth() > 0 && !empty($enemyTeam));
+} while($player->getHealth() > 0 && !empty($enemyTeam));
 
 
-if ($dracofeu->getHealth() > 0) {
-    echo PHP_EOL . "Dracofeu a gagné !" . PHP_EOL;
+if ($player->getHealth() > 0) {
+    echo PHP_EOL . $player->getName() . " a gagné !" . PHP_EOL;
 } else {
     echo PHP_EOL . $enemy->getName() . " a gagné !" . PHP_EOL;
 }
