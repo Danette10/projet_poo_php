@@ -12,9 +12,14 @@ require_once 'autoload.php';
 // Création des personnages
 $dracofeu = new Dracofeu();
 $tortank = new Tortank();
+$tortipouss = new Tortipouss();
+
+$enemyTeam = [$tortank, $tortipouss];
+
+$enemy = $enemyTeam[array_rand($enemyTeam)];
 
 $elementaryTypePlayer = $dracofeu->getElementaryType();
-$elementaryTypeEnemy = $tortank->getElementaryType();
+$elementaryTypeEnemy = $enemy->getElementaryType();
 
 
 // Création des sorts
@@ -29,6 +34,13 @@ $hydrocanon = new AttackSpell(
     attackEfficiency: 20,
     name: 'Hydrocanon',
     description: 'Un sort d\'eau qui inflige des dégâts',
+    manaCost: 10,
+);
+
+$tranchHerbe = new AttackSpell(
+    attackEfficiency: 20,
+    name: 'Tranch\'herbe',
+    description: 'Un sort de plante qui inflige des dégâts',
     manaCost: 10,
 );
 
@@ -50,8 +62,12 @@ $dracofeu->setAttackSpells([
     $fireball
 ]);
 
-$tortank->setAttackSpells([
+$enemyTeam[0]->setAttackSpells([
     $hydrocanon
+]);
+
+$enemyTeam[1]->setAttackSpells([
+    $tranchHerbe
 ]);
 
 
@@ -59,7 +75,12 @@ $numberOfRound = 1;
 
 
 //Boucle de jeu
-while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
+while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
+
+    if($enemy->getHealth() <= 0) {
+        unset($enemyTeam[array_search($enemy, $enemyTeam)]);
+        $enemy = $enemyTeam[array_rand($enemyTeam)];
+    }
 
     echo PHP_EOL . 'Tour ' . $numberOfRound . PHP_EOL;
 
@@ -74,15 +95,11 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
 
 
     //AI de l'ennemie
-    $randomSpellTortank = $tortank->getAttackSpells()[array_rand($tortank->getAttackSpells())];
+    $randomSpellEnemy = $enemy->getAttackSpells()[array_rand($enemy->getAttackSpells())];
 
-    $previousManaTortank = $tortank->getMana();
-    $tortank->setMana($previousManaTortank - $randomSpellTortank->getManaCost());
-    $tortank->attackEnemy($dracofeu, false);
-    echo "Tortank a utilisé " . $randomSpellTortank->getName() . " et a infligé " . $randomSpellTortank->getAttackEfficiency() . " points de dégâts à Dracofeu" . PHP_EOL;
-    echo "Dracofeu a perdu " . $randomSpellTortank->getAttackEfficiency() . " points de vie" . PHP_EOL;
-    echo "Dracofeu a maintenant " . $dracofeu->getHealth() . " points de vie" . PHP_EOL;
-    echo "Il reste " . $tortank->getMana() . " points de mana à Tortank" . PHP_EOL . PHP_EOL;
+    $previousManaEnemy = $enemy->getMana();
+    $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
+    $enemy->attackEnemy($dracofeu, false);
 
 
     //Logique des choix du personnages
@@ -99,7 +116,7 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
             echo "\033[0m";
             echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
 
-            $dracofeu->attackEnemy($tortank, true);
+            $dracofeu->attackEnemy($enemy, true);
 
             break;
 
@@ -120,12 +137,12 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
     //Post round
     $numberOfRound++;
     $dracofeu->setMana($dracofeu->getMana() + $dracofeu->getManaRecoveryRate());
-    $tortank->setMana($tortank->getMana() + $tortank->getManaRecoveryRate());
+    $enemy->setMana($enemy->getMana() + $enemy->getManaRecoveryRate());
 }
 
 
 if ($dracofeu->getHealth() > 0) {
     echo PHP_EOL . "Dracofeu a gagné !" . PHP_EOL;
 } else {
-    echo PHP_EOL . "Tortank a gagné !" . PHP_EOL;
+    echo PHP_EOL . $enemy->getName() . " a gagné !" . PHP_EOL;
 }

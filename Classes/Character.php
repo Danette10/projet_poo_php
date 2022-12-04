@@ -151,6 +151,9 @@ abstract class Character
     }
 
     public function attackEnemy(Character $enemy, bool $isAttackSpell){
+
+        echo $this->name . ' attaque ' . $enemy->getName() . PHP_EOL;
+
         if($this->setBonusAttack($enemy)){
             // Text color in green
             echo "\033[32m";
@@ -170,7 +173,6 @@ abstract class Character
                 $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack);
             }
         }
-        echo $this->name . ' attaque ' . $enemy->getName() . PHP_EOL;
 
     }
 
@@ -191,7 +193,11 @@ abstract class Character
             $this->setHealth($this->getHealth() - ($physicalAttack + $magicalAttack) + $this->getDefence());
         }
 
-        echo $this->getName()." possède : ".$this->getHealth()." points de vie".PHP_EOL;
+        if($this->getHealth() <= 0){
+            $this->setHealth(0);
+        }
+
+        echo $this->getName()." possède : ".$this->getHealth()." points de vie".PHP_EOL . PHP_EOL;
     }
 
     //Methods of Spells
