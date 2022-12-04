@@ -183,7 +183,7 @@ abstract class Character
             /*
              * Quand nous utilisons le sort de défence, puis un autre sort, dans la fonction receiveAttack, nous tentons d'accéder à l'attribut
              * getDefenceEfficiency. Sauf que le nouveau sort n'est pas le sort de défence mais celui de soin ou d'attaque
-             * Ces sorts de possédans pas d'attribut getDefenceEfficiency, ils renvoient une erreur
+             * Ces sorts ne possèdent pas d'attribut getDefenceEfficiency, ils renvoient donc une erreur
              */
 
             $precedentDefence = $this->getDefence();

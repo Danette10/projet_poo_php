@@ -75,15 +75,8 @@ $numberOfRound = 1;
 
 
 //Boucle de jeu
-while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
-
-    if($enemy->getHealth() <= 0) {
-        unset($enemyTeam[array_search($enemy, $enemyTeam)]);
-        $enemy = $enemyTeam[array_rand($enemyTeam)];
-    }
-
+do {
     echo PHP_EOL . 'Tour ' . $numberOfRound . PHP_EOL;
-
 
     do {
         //Affichage et Input action du joueur
@@ -107,7 +100,7 @@ while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
                 echo "\033[31m";
                 echo $fireball->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
                 $dracofeu->attackEnemy($enemy, true);
 
@@ -123,7 +116,7 @@ while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
                 echo "\033[32m";
                 echo $heal->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
                 $dracofeu->triggerHealingSpell();
 
@@ -139,32 +132,40 @@ while ($dracofeu->getHealth() > 0 && !empty($enemyTeam)) {
                 echo "\033[34m";
                 echo $shield->getName() . PHP_EOL;
                 echo "\033[0m";
-                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
+                echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
                 $dracofeu->triggerDefenceSpell();
 
                 break;
 
             default:
-                echo 'Sort non reconnu';
-                exit;
+                echo 'Sort non reconnu'. PHP_EOL;
         }
     }while($sortChoisi != 1 && $sortChoisi != 2);
 
 
-    //AI de l'ennemie
-    $randomSpellEnemy = $enemy->getAttackSpells()[array_rand($enemy->getAttackSpells())];
+    //Etat logique de l'AI
+    if($enemy->getHealth() <= 0) {
+        unset($enemyTeam[array_search($enemy, $enemyTeam)]);
+        if(!empty($enemyTeam)){
+            $enemy = $enemyTeam[array_rand($enemyTeam)];
+        }
+    }
+    else{
+        //AI de l'ennemie
+        $randomSpellEnemy = $enemy->getAttackSpells()[array_rand($enemy->getAttackSpells())];
 
-    $previousManaEnemy = $enemy->getMana();
-    $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
-    $enemy->attackEnemy($dracofeu, false);
+        $previousManaEnemy = $enemy->getMana();
+        $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
+        $enemy->attackEnemy($dracofeu, false);
 
 
-    //Post round
-    $numberOfRound++;
-    $dracofeu->setMana($dracofeu->getMana() + $dracofeu->getManaRecoveryRate());
-    $enemy->setMana($enemy->getMana() + $enemy->getManaRecoveryRate());
-}
+        //Post round
+        $numberOfRound++;
+        $dracofeu->setMana($dracofeu->getMana() + $dracofeu->getManaRecoveryRate());
+        $enemy->setMana($enemy->getMana() + $enemy->getManaRecoveryRate());
+    }
+} while($dracofeu->getHealth() > 0 && !empty($enemyTeam));
 
 
 if ($dracofeu->getHealth() > 0) {
