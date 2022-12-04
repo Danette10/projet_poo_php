@@ -100,7 +100,7 @@ do {
     do {
         //Affichage et Input action du joueur
         echo "Choisissez un sort parmi les suivants : " . PHP_EOL;
-        echo "\t1. Fireball" . PHP_EOL;
+        echo "\t1. " . $player->getAttackSpells()[0]->getName() . PHP_EOL;
         echo "\t2. Heal" . PHP_EOL;
         echo "\t3. Shield" . PHP_EOL;
 
