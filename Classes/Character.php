@@ -150,15 +150,25 @@ abstract class Character
         return $this->bonusAttack;
     }
 
-    public function attackEnemy(Character $enemy){
+    public function attackEnemy(Character $enemy, bool $isAttackSpell){
         if($this->setBonusAttack($enemy)){
             // Text color in green
             echo "\033[32m";
             echo $this->name . ' a un bonus d\'attaque de 10 points !' . PHP_EOL;
             echo "\033[0m";
-            $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack + 10);
+            if($isAttackSpell == true){
+                $enemy->receiveAttack(0, $this->spell->getAttackEfficiency() + $this->magicalAttack + 10);
+            }
+            else{
+                $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack + 10);
+            }
         }else{
-            $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack);
+            if($isAttackSpell == true){
+                $enemy->receiveAttack(0, $this->spell->getAttackEfficiency() + $this->magicalAttack);
+            }
+            else{
+                $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack);
+            }
         }
         echo $this->name . ' attaque ' . $enemy->getName() . PHP_EOL;
 
@@ -185,6 +195,7 @@ abstract class Character
     }
 
     //Methods of Spells
+    /*
     public function triggerHealingSpell(){
         $this->setHealth($this->getHealingSpell()->getHealingEfficiency());
         echo "Le ".$this->getName()." vient de ce soigner de : ".$this->getHealingSpell()->getHealingEfficiency().PHP_EOL;
@@ -205,7 +216,7 @@ abstract class Character
         $this->setIsProtectedByDefenceSpell(true);
 
         //reduction de mana
-    }
+    }*/
 
     public function recoverMana(){
         //Besoin de limité le plafond/seuil de mana

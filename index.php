@@ -13,6 +13,10 @@ require_once 'autoload.php';
 $dracofeu = new Dracofeu();
 $tortank = new Tortank();
 
+$elementaryTypePlayer = $dracofeu->getElementaryType();
+$elementaryTypeEnemy = $tortank->getElementaryType();
+
+
 // Création des sorts
 $fireball = new AttackSpell(
     attackEfficiency: 20,
@@ -50,17 +54,17 @@ $tortank->setAttackSpells([
     $hydrocanon
 ]);
 
-$elementaryTypePlayer = $dracofeu->getElementaryType();
-$elementaryTypeEnemy = $tortank->getElementaryType();
 
-$count = 1;
+$numberOfRound = 1;
 
+
+//Boucle de jeu
 while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
 
-    echo PHP_EOL . 'Tour ' . $count . PHP_EOL;
+    echo PHP_EOL . 'Tour ' . $numberOfRound . PHP_EOL;
 
-    $randomSpellTortank = $tortank->getAttackSpells()[array_rand($tortank->getAttackSpells())];
 
+    //Affichage et Input action du joueur
     echo "Choisissez un sort parmi les suivants : " . PHP_EOL;
     echo "\t1. Fireball" . PHP_EOL;
     echo "\t2. Heal" . PHP_EOL;
@@ -68,14 +72,20 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
 
     $sortChoisi = readline();
 
+
+    //AI de l'ennemie
+    $randomSpellTortank = $tortank->getAttackSpells()[array_rand($tortank->getAttackSpells())];
+
     $previousManaTortank = $tortank->getMana();
     $tortank->setMana($previousManaTortank - $randomSpellTortank->getManaCost());
-    $tortank->attackEnemy($dracofeu);
+    $tortank->attackEnemy($dracofeu, false);
     echo "Tortank a utilisé " . $randomSpellTortank->getName() . " et a infligé " . $randomSpellTortank->getAttackEfficiency() . " points de dégâts à Dracofeu" . PHP_EOL;
     echo "Dracofeu a perdu " . $randomSpellTortank->getAttackEfficiency() . " points de vie" . PHP_EOL;
     echo "Dracofeu a maintenant " . $dracofeu->getHealth() . " points de vie" . PHP_EOL;
     echo "Il reste " . $tortank->getMana() . " points de mana à Tortank" . PHP_EOL . PHP_EOL;
 
+
+    //Logique des choix du personnages
     switch ($sortChoisi) {
         case 1:
             $dracofeu->setSpell($fireball);
@@ -89,8 +99,7 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
             echo "\033[0m";
             echo "Il vous reste " . $dracofeu->getMana() . " points de mana" . PHP_EOL;
 
-            $dracofeu->attackEnemy($tortank);
-
+            $dracofeu->attackEnemy($tortank, true);
 
             break;
 
@@ -106,7 +115,10 @@ while ($dracofeu->getHealth() > 0 && $tortank->getHealth() > 0) {
             echo 'Sort non reconnu';
             exit;
     }
-    $count++;
+
+
+    //Post round
+    $numberOfRound++;
     $dracofeu->setMana($dracofeu->getMana() + $dracofeu->getManaRecoveryRate());
     $tortank->setMana($tortank->getMana() + $tortank->getManaRecoveryRate());
 }
