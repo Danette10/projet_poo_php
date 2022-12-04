@@ -116,6 +116,10 @@ abstract class Character
 
                     $this->bonusAttack = true;
 
+                }else{
+
+                    $this->bonusAttack = false;
+
                 }
 
                 break;
@@ -125,6 +129,10 @@ abstract class Character
                 if ($enemy->getElementaryType() === 'Plant') {
 
                     $this->bonusAttack = true;
+
+                }else{
+
+                    $this->bonusAttack = false;
 
                 }
 
@@ -136,13 +144,11 @@ abstract class Character
 
                     $this->bonusAttack = true;
 
+                }else{
+
+                    $this->bonusAttack = false;
+
                 }
-
-                break;
-
-            default:
-
-                $this->bonusAttack = false;
 
                 break;
         }

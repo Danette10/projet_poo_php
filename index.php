@@ -157,7 +157,7 @@ do {
 
         $previousManaEnemy = $enemy->getMana();
         $enemy->setMana($previousManaEnemy - $randomSpellEnemy->getManaCost());
-        $enemy->attackEnemy($dracofeu, false);
+        $enemy->attackEnemy($dracofeu, true);
 
 
         //Post round
