@@ -1,12 +1,19 @@
 <?php
+
 use App\Characters\Dracofeu;
 use App\Characters\Tortank;
 use App\Characters\Tortipouss;
 use App\Spells\AttackSpell;
 use App\Spells\DefenceSpell;
 use App\Spells\HealingSpell;
+use App\Weapons\Cannon;
+use App\Weapons\Cutlass;
+use App\Weapons\Needle;
+use App\Weapons\RodOfAges;
+use App\Weapons\Spoon;
 
-require_once 'autoload.php';
+
+require_once './autoload.php';
 
 
 // Création des personnages
@@ -29,7 +36,7 @@ $playerChoice = readline();
 $player = $allPlayers[$playerChoice];
 
 echo "Vous avez choisi " . $player->getName() . " !" . PHP_EOL;
-
+echo"\n";
 // Création du tableau des ennemis
 $enemyTeam = $allPlayers;
 unset($enemyTeam[$playerChoice]);
@@ -77,6 +84,8 @@ $shield = new DefenceSpell(
     manaCost: 10,
 );
 
+
+
 $player->setAttackSpells([
     $fireball
 ]);
@@ -92,6 +101,42 @@ $tortipouss->setAttackSpells([
 
 $numberOfRound = 1;
 
+//Creation des armes
+
+$cannon = new Cannon();
+//echo "Vous avez crée une arme : ".$Cannon->getName() . "!" . PHP_EOL;
+
+$needle = new Needle();
+//echo "Vous avez crée une deuxième arme : ".$Needle->getName() . "!" . PHP_EOL;
+
+$spoon = new Spoon();
+//echo "Vous avez créé une troisième arme : ".$Spoon->getName() . "!" . PHP_EOL;
+
+$cutlass = new Cutlass();
+//echo "Vous avez crée une quatrième arme : ".$Cutlass->getName(). "!" . PHP_EOL;
+
+$rodOfAges = new RodOfAges();
+//echo "Vous avez crée une cinquième arme : ".$RodOfAges->getName(). "!" . PHP_EOL;
+
+/*if( $cannon instanceof Weapon) {
+	$player->setWeapon((Weapon)($spoon));
+}
+
+echo ":".$spoon->getName() . PHP_EOL;
+*/
+
+
+
+$player->setAttackWeapon([$spoon]);
+//echo "Le joueur :".$player->getName() . " possède ".$player->getAttackWeapon()[0]->getName() . "!" . PHP_EOL;
+
+$tortank->setAttackWeapon([$cannon]);
+//echo "Le joueur :".$tortank->getName() . " possède ".$tortank->getAttackWeapon()[0]->getName() . "!" . PHP_EOL;
+
+$tortipouss->setAttackWeapon([$needle]);
+//echo "Le joueur :".$tortipouss->getName() . " possède ".$tortipouss->getAttackWeapon()[0]->getName() . "!" . PHP_EOL;
+
+
 
 //Boucle de jeu
 do {
@@ -105,8 +150,7 @@ do {
         echo "\t3. Shield" . PHP_EOL;
 
         $sortChoisi = readline();
-
-
+		
         //Logique des choix du personnages
         switch ($sortChoisi) {
             case 1:
@@ -160,7 +204,80 @@ do {
             default:
                 echo 'Sort non reconnu'. PHP_EOL;
         }
-    }while($sortChoisi != 1 && $sortChoisi != 2);
+        
+        
+        //Affichage et Input action du joueur
+        echo "Choisissez une arme parmi les suivants : " . PHP_EOL;
+        echo "\t1." . $player->getAttackWeapon()[0]->getName()  . PHP_EOL;
+        echo "\t2. Cannon" . PHP_EOL;
+        echo "\t3. Needle" . PHP_EOL;
+
+        $armeChoisi = readline();
+        
+        //Logique des choix du personnages
+        switch ($armeChoisi) {
+            case 1:
+                if( $spoon instanceof Weapon) {
+					$player->setWeapon((Weapon)($spoon));
+				}
+				
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - ($spoon->getMagicalDamageRatio()));
+
+                echo "Vous avez choisi l'arme ";
+                echo "\033[31m";
+                echo $spoon->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+
+                $player->attackEnem($enemy, true);
+
+                break;
+
+            case 2:
+                if( $cannon instanceof Weapon) {
+					$player->setWeapon((Weapon)($cannon));
+				}
+
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - $cannon->getPhysicalDamageRatio());
+
+                echo "Vous avez choisi l'arme ";
+                echo "\033[32m";
+                echo $cannon->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+
+                $player->attackEnem($enemy, true);
+
+                break;
+
+            case 3:
+                if( $needle instanceof Weapon) {
+					$player->setWeapon((Weapon)($needle));
+				}
+
+                $previousMana = $player->getMana();
+                $player->setMana($previousMana - $needle->getPhysicalDamageRatio());
+
+                echo "Vous avez choisi l'arme ";
+                echo "\033[34m";
+                echo $needle->getName() . PHP_EOL;
+                echo "\033[0m";
+                echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
+
+               $player->attackEnem($enemy, true);
+
+                break;
+
+            default:
+                echo 'Arme non reconnu'. PHP_EOL;
+        }
+        
+        
+        
+        
+    }while(($sortChoisi != 1 && $sortChoisi != 2) && ($armeChoisi != 1 && $armeChoisi != 2));
 
 
     //Etat logique de l'AI
@@ -192,3 +309,7 @@ if ($player->getHealth() > 0) {
 } else {
     echo PHP_EOL . $enemy->getName() . " a gagné !" . PHP_EOL;
 }
+
+
+
+

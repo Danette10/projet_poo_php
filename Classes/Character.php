@@ -33,8 +33,11 @@ abstract class Character
         $this->weapon = $weapon;
         $this->spell = $spell;
         $this->isProtectedByDefenceSpell = false;
+        $this->isProtectedByDefenceWeapon = false;
         $this->bonusAttack = false;
     }
+    
+    
 
     //Getter & Setter for normals attributs
     public function getElementaryType()
@@ -61,7 +64,32 @@ abstract class Character
     public function getName(){
         return $this->name;
     }
+	
+	
+	//Getter & Setter for Weapon
+	
+	public function getWeapon(){
+		return $this->weapon;
+	}
+	
+	public function setWeapon(Weapon $weapon){
+		$this->weapon = $weapon;
+	}
+	
+	public function setAttackWeapon(array $array)
+    {
+        $this->attackWeapon = $array;
+    }
 
+    public function getAttackWeapon()
+    {
+        return $this->attackWeapon;
+    }
+	
+	public function getIsProtectedByDefenceWeapon(){
+        return $this->isProtectedByDefenceWeapon;
+    }
+	
     //Getter & Setter for Spell
     public function getSpell(){
         return $this->spell;
@@ -243,4 +271,68 @@ abstract class Character
 
         //reduction de mana
     }
+    
+	//Methods of Weapons
+	
+	public function attackEnem(Character $enemy, bool $isAttackWeapon){
+
+        echo $this->name . ' attaque ' . $enemy->getName() . PHP_EOL;
+
+        if($this->setBonusAttack($enemy)){
+            // Text color in green
+            echo "\033[32m";
+            echo $this->name . ' a un bonus d\'attaque de 10 points !' . PHP_EOL;
+            echo "\033[0m";
+            if($isAttackWeapon == true){
+                $enemy->receiveAttack(0, /*$this->weapon->getMagicalDamageRatio()*/ 10 + $this->magicalAttack + 10);
+            }
+            else{
+                $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack + 10);
+            }
+        }else{
+            if($isAttackWeapon == true){
+                $enemy->receiveAttack(0, /*$this->weapon->getMagicalDamageRatio()*/ 10 + $this->magicalAttack);
+            }
+            else{
+                $enemy->receiveAttack($this->physicalAttack, $this->magicalAttack);
+            }
+        }
+
+    }
+    
+    
+      public function receiveAtt(int $physicalAttack, int $magicalAttack){
+
+        if($this->getIsProtectedByDefenceWeapon() == true){
+
+            
+
+            $precedentDefence = $this->getDefence();
+            $this->setDefence( $this->getDefence());
+
+            $this->setHealth($this->getHealth() - ($physicalAttack + $magicalAttack) + $this->getDefence());
+
+            $this->setDefence($precedentDefence);
+            $this->setIsProtectedByDefenceSpell(false);
+        }
+        else{
+            $this->setHealth($this->getHealth() - ($physicalAttack + $magicalAttack) + $this->getDefence());
+        }
+
+        if($this->getHealth() <= 0){
+            $this->setHealth(0);
+        }
+
+        echo $this->getName()." possède : ".$this->getHealth()." points de vie".PHP_EOL . PHP_EOL;
+    }
+	
+	    
+    
+    
+    
+    
+    
+    
+    
+    
 }

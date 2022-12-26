@@ -1,6 +1,8 @@
 <?php
-spl_autoload_register(function ($className) {
-    $className = str_replace('App\\', "", $className);
-    $className = "./" . str_replace('\\', '/', $className . '.php');
-    require_once($className);
+spl_autoload_register(function ($classname) {
+    $classname = str_replace('App\\', "", $classname);
+    $classname = "./" . str_replace('\\', '/', $classname . '.php');
+ 	if(file_exists($classname)){
+ 		require_once($classname);
+ 	}  
 });
