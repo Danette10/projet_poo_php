@@ -98,6 +98,11 @@ $tortipouss->setAttackSpells([
     $tranchHerbe
 ]);
 
+$enemy->setAttackSpells([
+    $fireball,
+    $hydrocanon,
+    $tranchHerbe
+]);
 
 $numberOfRound = 1;
 
@@ -154,14 +159,14 @@ do {
         //Logique des choix du personnages
         switch ($sortChoisi) {
             case 1:
-                $player->setSpell($fireball);
+                $player->setSpell($player->getAttackSpells()[0]);
 
                 $previousMana = $player->getMana();
                 $player->setMana($previousMana - $player->getSpell()->getManaCost());
 
                 echo "Vous avez choisi le sort ";
                 echo "\033[31m";
-                echo $fireball->getName() . PHP_EOL;
+                echo $player->getSpell()->getName() . PHP_EOL;
                 echo "\033[0m";
                 echo "Il vous reste " . $player->getMana() . " points de mana" . PHP_EOL. PHP_EOL;
 
@@ -208,7 +213,7 @@ do {
         
         //Affichage et Input action du joueur
         echo "Choisissez une arme parmi les suivants : " . PHP_EOL;
-        echo "\t1." . $player->getAttackWeapon()[0]->getName()  . PHP_EOL;
+        echo "\t1. Cuillère en argent" . PHP_EOL;
         echo "\t2. Cannon" . PHP_EOL;
         echo "\t3. Needle" . PHP_EOL;
 
